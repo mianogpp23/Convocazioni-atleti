@@ -182,13 +182,13 @@ details.guida[open] summary { margin-bottom: 10px; }
         <p><b>Tutti del mese</b>: convocia tutti quelli con almeno una presenza nel mese. <b>Deseleziona</b>: li toglie tutti.</p>
 
         <h3>📋 Lista convocati</h3>
-        <p>Si riempie toccando gli atleti nella tabella delle statistiche. Ogni riga ha il bottone <b>Invia</b> che apre WhatsApp con il messaggio già scritto per quell'atleta.</p>
+        <p>Si riempie toccando gli atleti nella tabella delle statistiche. Ogni nome si tocca per toglierlo.</p>
         <p><b>Messaggio extra</b>: frase che viene aggiunta a ogni messaggio. <b>Note per la stampa</b>: testo che compare solo sul foglio stampato.</p>
         <p><b>Invia al Gruppo</b>: apre WhatsApp con il messaggio per tutti insieme. Il gruppo lo scegli tu.</p>
         <p><b>Stampa PDF</b>: apre la stampa della lista convocati. Dalla schermata di stampa puoi salvare il PDF.</p>
 
         <h3>🖨 Foglio presenze stampabile</h3>
-        <p><b>Crea foglio</b>: scegli il mese e tocca il pulsante. Si apre la stampa di tutto il mese con tutti gli atleti: una pagina per ogni gruppo, in una tabella tipo foglio Excel con una colonna per giorno dove mettere la X e una colonna TOT. Serve per compilarlo a mano, indipendentemente dall'app.</p>
+        <p><b>Crea foglio</b>: scegli il mese e tocca il pulsante. Si apre la stampa di tutto il mese con tutti gli atleti, in una tabella tipo foglio Excel con una colonna per giorno dove mettere la X e una colonna TOT. Serve per compilarlo a mano, indipendentemente dall'app.</p>
     </div>
 </details>
 
@@ -234,11 +234,9 @@ details.guida[open] summary { margin-bottom: 10px; }
     <div class="titolo-sezione">📂 GESTIONE PRESENZE</div>
     <div id="statoPresenze" class="stato-lista">Nessuna lista presenze importata</div>
     <button class="btn btn-grande" style="background:#2e7d32" id="btnImportaPresenze">📥 Importa presenze</button>
-    <button class="btn" style="background:#007bff" id="btnCaricaAtleti">📇 Carica lista atleti (telefoni)</button>
-    <input type="file" id="caricaAtletiFile" style="visibility:hidden; width:0; height:0; padding:0; border:0;" accept=".json">
     <button class="btn btn-grande" style="background:#d32f2f" id="btnCancellaPresenze">🗑 Cancella lista presenze</button>
     <input type="file" id="importaPresenzeFile" style="visibility:hidden; width:0; height:0; padding:0; border:0;" accept=".json" multiple>
-    <p style="font-size:0.8rem; color:#666; margin:8px 0 0 0;">I file sono quelli esportati dall'app Registro Presenze. Puoi caricarne più di uno insieme: vengono tutti uniti. La lista atleti serve solo per i numeri di telefono: senza quella i convocati restano senza bottone Invia.</p>
+    <p style="font-size:0.8rem; color:#666; margin:8px 0 0 0;">I file sono quelli esportati dall'app Registro Presenze. Puoi caricarne più di uno insieme, anche di coach e giorni diversi: vengono uniti e i duplicati scartati. Se lo stesso coach ha salvato due volte lo stesso giorno, vale l'ultimo salvataggio.</p>
 </div>
 
 <div class="card no-print">
@@ -267,10 +265,8 @@ details.guida[open] summary { margin-bottom: 10px; }
     <table>
         <thead>
             <tr>
-                <th style="width:45%">Nome</th>
-                <th style="width:15%">Anno</th>
-                <th style="width:25%">WhatsApp</th>
-                <th style="width:15%"></th>
+                <th style="width:70%">Nome</th>
+                <th style="width:30%"></th>
             </tr>
         </thead>
         <tbody id="convocatiBody"></tbody>
@@ -289,7 +285,7 @@ details.guida[open] summary { margin-bottom: 10px; }
 
 <div class="card no-print">
     <div class="titolo-sezione" style="font-size:1.15rem;">🖨 FOGLIO PRESENZE STAMPABILE</div>
-    <p style="font-size:0.8rem; color:#666; margin:8px 0 0 0;">Stampa tutto il mese con tutti gli atleti, una pagina per ogni gruppo, in una tabella con una colonna per giorno dove mettere la X. Serve per compilarlo a mano, indipendentemente dall'app.</p>
+    <p style="font-size:0.8rem; color:#666; margin:8px 0 0 0;">Stampa tutto il mese con tutti gli atleti, in una tabella con una colonna per giorno dove mettere la X. Serve per compilarlo a mano, indipendentemente dall'app.</p>
 </div>
 
 <div id="zonaStampa"></div>
@@ -311,7 +307,6 @@ let selIncontro = -1;        // indice dell'incontro scelto dentro il campionato
 let presenze = {};           // { nome: { "2026-10-06": true, ... } }
 let convocati = new Set();   // nomi degli atleti convocati per l'incontro attivo
 
-const ATLETI_KEY    = 'vconv_atleti_v1';       // anagrafica con telefono: [{n,a,t}]
 const CALENDARI_KEY = 'vconv_calendari_v1';
 const PRESENZE_KEY  = 'vconv_presenze_v1';
 const COACH_KEY     = 'vconv_coach_v1';
@@ -333,25 +328,7 @@ function oraBreve(o) {
     return String(o || '').slice(0, 5);
 }
 
-// Nome breve per il messaggio WhatsApp: "Rossi Mario Luca" -> "Mario"
-function nomeBreve(nome) {
-    const p = String(nome).trim().split(/\s+/);
-    return p.length >= 2 ? p[1] : p[0];
-}
-
 function nomeCoach() { return ($('nomeCoach').value || '').trim().slice(0, 40); }
-
-function scaricaTesto(testo, filename) {
-    const blob = new Blob([testo], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
 
 function leggiChiave(k, fallback) {
     try {
@@ -363,17 +340,6 @@ function leggiChiave(k, fallback) {
 function scriviChiave(k, v) {
     try { localStorage.setItem(k, JSON.stringify(v)); return true; }
     catch (e) { alert('Impossibile salvare: ' + e.message); return false; }
-}
-
-/* ---------- ATLETI (anagrafica con telefono, caricata da JSON) ---------- */
-let atleti = [];
-let telPerNome = {};
-
-function caricaAtletiSalvati() {
-    const dati = leggiChiave(ATLETI_KEY, []);
-    atleti = Array.isArray(dati) ? dati.filter(a => a && a.n) : [];
-    telPerNome = {};
-    atleti.forEach(a => { if (a.t) telPerNome[norm(a.n)] = a.t; });
 }
 
 /* ---------- GESTIONE CALENDARI ---------- */
@@ -545,23 +511,81 @@ $('btnSalvaIncontro').onclick = () => {
 
 /* ---------- GESTIONE PRESENZE ---------- */
 
-function validaPresenze(data) {
-    // Accetto il JSON del registro: {versione, coach, data, ora, totale, presenti[]}
+// Un giorno = un solo elenco di presenti.
+// Coach diversi sulla stessa data -> unione (presente se almeno uno lo segnala).
+// Stesso coach sulla stessa data -> vale l'ultimo salvataggio (ts/ora più recente).
+function leggiFilePresenze(data) {
     const righe = Array.isArray(data) ? data : [data];
-    let n = 0;
+    const out = [];
     righe.forEach(r => {
         if (!r || typeof r.data !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.data) || !Array.isArray(r.presenti)) {
             throw new Error('File non valido: manca "data" (AAAA-MM-GG) o "presenti".');
         }
-        r.presenti.forEach(nome => {
-            if (typeof nome !== 'string' || !nome.trim()) return;
-            const n2 = nome.trim();
-            if (!presenze[n2]) presenze[n2] = {};
-            presenze[n2][r.data] = true;
-            n++;
+        out.push({
+            data: r.data,
+            coach: (typeof r.coach === 'string' ? r.coach.trim() : '').slice(0, 40),
+            ts: (typeof r.ts === 'string' && r.ts) ? r.ts
+                : r.data + 'T' + String(r.ora || '00:00').padStart(5, '0') + ':00',
+            presenti: r.presenti.filter(n => typeof n === 'string' && n.trim()).map(n => n.trim())
         });
     });
-    return n;
+    return out;
+}
+
+function ordinaPerTs(a, b) { return String(a.ts).localeCompare(String(b.ts)); }
+
+// Applica i file alla mappa presenze esistente e restituisce un riepilogo
+function applicaPresenze(file) {
+    // conto solo le presenze davvero nuove, non quelle che esistevano già
+    const prima = new Set();
+    Object.keys(presenze).forEach(n => Object.keys(presenze[n]).forEach(d => prima.add(n + '|' + d)));
+
+    const perGiorno = {};
+    file.forEach(r => {
+        const g = perGiorno[r.data] || (perGiorno[r.data] = []);
+        g.push(r);
+    });
+
+    let righeScartate = 0, giorniUnificati = 0, aggiunte = 0;
+    Object.keys(perGiorno).forEach(data => {
+        const g = perGiorno[data].sort(ordinaPerTs);
+        const coach = {};
+        g.forEach(r => { coach[r.coach || '(senza coach)'] = true; });
+        const nCoach = Object.keys(coach).length;
+
+        if (g.length > 1) giorniUnificati++;
+        if (nCoach === 1) {
+            // stesso coach: vale l'ultimo salvataggio, gli altri si scartano
+            const vincitore = g[g.length - 1];
+            righeScartate += g.length - 1;
+            // pulisco il giorno e lo riscrivo: così un'assenza corretta sparisce
+            Object.keys(presenze).forEach(nome => { delete presenze[nome][data]; });
+            vincitore.presenti.forEach(nome => {
+                if (!presenze[nome]) presenze[nome] = {};
+                presenze[nome][data] = true;
+            });
+        } else {
+            // coach diversi: unione dei presenti
+            const unione = new Set();
+            g.forEach(r => r.presenti.forEach(n => unione.add(n)));
+            unione.forEach(nome => {
+                if (!presenze[nome]) presenze[nome] = {};
+                presenze[nome][data] = true;
+            });
+        }
+    });
+
+    // quante sono davvero nuove rispetto a prima
+    Object.keys(presenze).forEach(n => Object.keys(presenze[n]).forEach(d => {
+        if (!prima.has(n + '|' + d)) aggiunte++;
+    }));
+
+    // ripulisco gli atleti rimasti senza nessuna presenza
+    Object.keys(presenze).forEach(nome => {
+        if (!Object.keys(presenze[nome]).length) delete presenze[nome];
+    });
+
+    return { righeScartate: righeScartate, giorniUnificati: giorniUnificati, aggiunte: aggiunte };
 }
 
 function contaPresenze() {
@@ -573,12 +597,15 @@ function contaPresenze() {
 function aggiornaStatoPresenze() {
     const el = $('statoPresenze');
     const at = Object.keys(presenze).length;
+    const gg = new Set();
+    Object.keys(presenze).forEach(n => Object.keys(presenze[n]).forEach(d => gg.add(d)));
     if (at) {
-        el.innerHTML = '✅ <strong>' + at + '</strong> atleti · <strong>' + contaPresenze() + '</strong> presenze';
+        el.innerHTML = '✅ <strong>' + at + '</strong> atleti · <strong>' + gg.size + '</strong> giorni · <strong>' +
+            contaPresenze() + '</strong> presenze';
     } else {
         el.textContent = '⚠️ Nessuna lista presenze importata. Usa "Importa presenze".';
     }
-}
+};
 
 $('btnImportaPresenze').onclick = () => $('importaPresenzeFile').click();
 
@@ -586,52 +613,42 @@ $('importaPresenzeFile').onchange = (e) => {
     const files = Array.from(e.target.files || []);
     e.target.value = '';
     if (!files.length) return;
-    let letti = 0, aggiunte = 0, errore = '';
+    let letti = 0, aggiunte = 0, scartate = 0, unificati = 0, coach = '';
     for (const f of files) {
         const r = new FileReader();
         r.onload = function(ev) {
-            try { aggiunte += validaPresenze(JSON.parse(ev.target.result)); }
-            catch (err) { errore = err.message; }
+            try {
+                const file = leggiFilePresenze(JSON.parse(ev.target.result));
+                const rip = applicaPresenze(file);
+                aggiunte += rip.aggiunte;
+                scartate += rip.righeScartate;
+                unificati += rip.giorniUnificati;
+                const c = file[0] && file[0].coach ? file[0].coach : '';
+                coach = coach && c && norm(coach) !== norm(c) ? coach + ', ' + c : (coach || c);
+            } catch (err) {
+                alert('Errore su "' + f.name + '": ' + err.message);
+            }
             letti++;
             if (letti === files.length) {
-                if (aggiunte && !scriviChiave(PRESENZE_KEY, presenze)) return;
+                // salvo sempre: anche una correzione che toglie presenze senza aggiungerne è un cambiamento
+                if (!scriviChiave(PRESENZE_KEY, presenze)) return;
                 aggiornaStatoPresenze();
                 renderStats();
                 renderConvocati();
-                if (aggiunte) alert('✅ Importate ' + aggiunte + ' presenze da ' + files.length + ' file.');
-                else if (errore) alert('Errore: ' + errore);
-                else alert('Nessuna presenza trovata nei file scelti.');
+                let msg = '✅ Importati ' + files.length + ' file';
+                if (coach) msg += ' (coach: ' + coach + ')';
+                msg += '\nPresenze nuove: ' + aggiunte;
+                if (unificati) msg += '\nGiorni con più salvataggi uniti: ' + unificati;
+                if (scartate) msg += '\nSalvataggi superati: ' + scartate;
+                if (!aggiunte && !unificati) msg += '\nNessun cambiamento: i dati erano già tutti presenti.';
+                alert(msg);
             }
         };
         r.readAsText(f);
     }
 };
 
-/* Carica anagrafica con i telefoni: serve per i link WhatsApp individuali */
-$('btnCaricaAtleti').onclick = () => $('caricaAtletiFile').click();
-
-$('caricaAtletiFile').onchange = (e) => {
-    const f = e.target.files[0];
-    e.target.value = '';
-    if (!f) return;
-    const r = new FileReader();
-    r.onload = function(ev) {
-        try {
-            const dati = JSON.parse(ev.target.result);
-            if (!Array.isArray(dati) || !dati.length) throw new Error('Deve essere un array di atleti.');
-            atleti = dati.filter(a => a && a.n);
-            if (!scriviChiave(ATLETI_KEY, atleti)) return;
-            telPerNome = {};
-            atleti.forEach(a => { if (a.t) telPerNome[norm(a.n)] = a.t; });
-            renderStats();
-            renderConvocati();
-            alert('✅ Caricati ' + atleti.length + ' atleti con i numeri di telefono.');
-        } catch (err) {
-            alert('Errore: ' + err.message);
-        }
-    };
-    r.readAsText(f);
-};
+/* ---------- SALVATAGGIO E CONVOCATI ---------- */
 
 $('btnCancellaPresenze').onclick = () => {
     if (!Object.keys(presenze).length) { alert('Nessuna lista presenze da cancellare.'); return; }
@@ -644,13 +661,9 @@ $('btnCancellaPresenze').onclick = () => {
 
 /* ---------- STATISTICHE ---------- */
 
-// Tutti gli atleti: dalla anagrafica + chi compare nelle presenze importate
+// Tutti gli atleti: semplicemente chi compare nelle presenze importate
 function tuttiGliAtleti() {
-    const visti = new Set();
-    const lista = [];
-    atleti.forEach(a => { if (a.n && !visti.has(norm(a.n))) { visti.add(norm(a.n)); lista.push(a.n); } });
-    Object.keys(presenze).forEach(n => { if (!visti.has(norm(n))) { visti.add(norm(n)); lista.push(n); } });
-    return lista.sort((a, b) => a.localeCompare(b, 'it'));
+    return Object.keys(presenze).sort((a, b) => a.localeCompare(b, 'it'));
 }
 
 function presenzeDelMese(nome, mese) {
@@ -696,7 +709,7 @@ function renderStats() {
         td.colSpan = nGiorni + 2;
         td.style.textAlign = 'center';
         td.style.color = '#999';
-        td.textContent = 'Nessun atleta. Importa le presenze o carica la lista atleti con i telefoni.';
+        td.textContent = 'Nessun atleta. Importa prima le presenze.';
         tr.appendChild(td);
         body.appendChild(tr);
         $('contaPresenze').textContent = '';
@@ -759,50 +772,21 @@ $('btnDeseleziona').onclick = () => {
 
 /* ---------- LISTA CONVOCATI ---------- */
 
-function messaggioPersonale(nome) {
-    const inc = incontroAttivo();
-    if (!inc) return '';
-    const extra = $('extraMsg').value.trim();
-    let msg = 'Ciao ' + nomeBreve(nome) + ', sei convocato!\n🏀 ' + inc.av +
-              '\n📅 ' + dataIt(inc.d) + ' ore ' + oraBreve(inc.o) + '\n📍 ' + inc.l;
-    if (extra) msg += '\n\n' + extra;
-    return msg;
-}
-
 function renderConvocati() {
     const body = $('convocatiBody');
-    const inc = incontroAttivo();
     body.innerHTML = '';
     $('vuotoConvocati').style.display = convocati.size ? 'none' : '';
 
     const nomi = Array.from(convocati).sort((a, b) => a.localeCompare(b, 'it'));
-    const anag = {};
-    atleti.forEach(a => { anag[norm(a.n)] = a; });
 
     nomi.forEach(nome => {
-        const a = anag[norm(nome)] || {};
-        const tel = (telPerNome[norm(nome)] || '').replace(/\D/g, '');
         const tr = document.createElement('tr');
         tr.className = 'conv-row';
 
         const tdNome = document.createElement('td');
         tdNome.textContent = nome;
-        const tdAnno = document.createElement('td');
-        tdAnno.textContent = a.a || '';
-        const tdWa = document.createElement('td');
-        if (tel && inc) {
-            const link = document.createElement('a');
-            link.href = 'https://wa.me/' + tel + '?text=' + encodeURIComponent(messaggioPersonale(nome));
-            link.target = '_blank';
-            link.className = 'mini btn-wa';
-            link.textContent = 'Invia';
-            tdWa.appendChild(link);
-        } else {
-            tdWa.style.color = '#999';
-            tdWa.style.fontSize = '0.75rem';
-            tdWa.textContent = tel ? '' : 'senza tel.';
-        }
         const tdX = document.createElement('td');
+        tdX.style.textAlign = 'right';
         const btn = document.createElement('button');
         btn.className = 'togli';
         btn.textContent = '✕';
@@ -810,8 +794,6 @@ function renderConvocati() {
         tdX.appendChild(btn);
 
         tr.appendChild(tdNome);
-        tr.appendChild(tdAnno);
-        tr.appendChild(tdWa);
         tr.appendChild(tdX);
         body.appendChild(tr);
     });
@@ -848,19 +830,15 @@ $('btnAzzera').onclick = () => {
 function stampaZone() {
     const inc = incontroAttivo();
     const nomi = Array.from(convocati).sort((a, b) => a.localeCompare(b, 'it'));
-    const anag = {};
-    atleti.forEach(a => { anag[norm(a.n)] = a; });
     const note = $('noteStampa').value.trim();
     let html = '<div class="testata"><img src="' + LOGO_SRC + '" alt=""><h1>🏀 CONVOCAZIONI</h1></div>';
     html += '<div style="text-align:center; margin-bottom:8px;"><b style="font-size:18px">' +
         (inc ? inc.av + ' — ' + dataIt(inc.d) + ' ore ' + oraBreve(inc.o) + ' — ' + inc.l : '') +
         '</b></div>';
     if (nomeCoach()) html += '<div style="text-align:center; margin-bottom:8px;">Coach: ' + nomeCoach() + '</div>';
-    html += '<table><thead><tr><th style="width:8%">N.</th><th style="width:52%">Nome</th><th style="width:20%">Anno</th><th style="width:20%">Tel</th></tr></thead><tbody>';
+    html += '<table><thead><tr><th style="width:10%">N.</th><th style="width:90%">Nome</th></tr></thead><tbody>';
     nomi.forEach((nome, i) => {
-        const a = anag[norm(nome)] || {};
-        html += '<tr><td style="text-align:center">' + (i + 1) + '</td><td>' + nome + '</td><td style="text-align:center">' +
-            (a.a || '') + '</td><td style="text-align:center">' + (a.t || '') + '</td></tr>';
+        html += '<tr><td style="text-align:center">' + (i + 1) + '</td><td>' + nome + '</td></tr>';
     });
     html += '</tbody></table>';
     html += '<div style="margin-top:12px; font-size:12px;"><b>Note:</b> ' + (note ? note.replace(/\n/g, '<br>') : 'nessuna') + '</div>';
@@ -870,48 +848,11 @@ function stampaZone() {
 
 /* ---------- FOGLIO PRESENZE STAMPABILE (identico al registro) ---------- */
 
-const STAGIONE = (function() {
-    const d = new Date();
-    return d.getMonth() >= 8 ? d.getFullYear() : d.getFullYear() - 1;
-})();
-
-const CATEGORIE = [
-    { nome: 'Pulcini',    anni: [STAGIONE - 6,  STAGIONE - 5]  },
-    { nome: 'Scoiattoli', anni: [STAGIONE - 8,  STAGIONE - 7]  },
-    { nome: 'Aquilotti',  anni: [STAGIONE - 10, STAGIONE - 9]  },
-    { nome: 'Under 13',   anni: [STAGIONE - 12, STAGIONE - 11] }
-];
-
-function categoriaDi(atleta) {
-    if (atleta.c) return atleta.c;
-    const cat = CATEGORIE.find(c => c.anni.includes(Number(atleta.a)));
-    return cat ? cat.nome : '';
-}
-
 function gruppiFoglio() {
-    const gruppi = [];
-    const usati = new Set();
-    CATEGORIE.forEach(c => {
-        usati.add(norm(c.nome));
-        gruppi.push({ chiave: norm(c.nome), titolo: c.nome.toUpperCase() + ' (' + c.anni[0] + '-' + String(c.anni[1]).slice(2) + ')' });
-    });
-    const anag = {};
-    atleti.forEach(a => { anag[norm(a.n)] = a; });
-    tuttiGliAtleti().forEach(n => {
-        const cat = categoriaDi(anag[norm(n)] || { a: 0, n: n });
-        if (cat && !usati.has(norm(cat))) { usati.add(norm(cat)); gruppi.push({ chiave: norm(cat), titolo: cat.toUpperCase() }); }
-    });
-    gruppi.push({ chiave: '', titolo: 'SENZA CATEGORIA' });
-    const anag2 = {};
-    atleti.forEach(a => { anag2[norm(a.n)] = a; });
-    return gruppi
-        .map(g => ({
-            titolo: g.titolo,
-            atleti: tuttiGliAtleti()
-                .filter(n => norm(categoriaDi(anag2[norm(n)] || { a: 0, n: n })) === g.chiave)
-                .map(n => ({ n: n, a: (anag2[norm(n)] || {}).a }))
-        }))
-        .filter(g => g.atleti.length > 0);
+    // Senza anagrafica non si conosce l'anno di nascita: un solo gruppo con tutti gli atleti
+    const nomi = tuttiGliAtleti();
+    if (!nomi.length) return [];
+    return [{ titolo: 'TUTTI GLI ATLETI', atleti: nomi.map(n => ({ n: n, a: 0 })) }];
 }
 
 function tabellaFoglio(lista, anno, m, nGiorni) {
@@ -1031,10 +972,20 @@ $('nomeCoach').oninput = () => {
 };
 
 /* ---------- AVVIO ---------- */
+
+// Chrome ripristina i valori dei campi form DOPO lo script e ripristina anche sul pageshow:
+// fissa le date una volta sola, quando sono vuote
+function fissaDateSeVuote() {
+    const oggi = oggiLocale();
+    if (!$('meseStats').value) $('meseStats').value = oggi.slice(0, 7);
+    if (!$('dataGara').value) $('dataGara').value = oggi;
+    renderStats();
+}
+
+window.addEventListener('load', function() {
 $('logoTesta').src = LOGO_SRC;
 try { $('nomeCoach').value = localStorage.getItem(COACH_KEY) || ''; } catch (e) {}
 
-caricaAtletiSalvati();
 calendari = leggiChiave(CALENDARI_KEY, []);
 if (!Array.isArray(calendari)) calendari = [];
 presenze = leggiChiave(PRESENZE_KEY, {});
@@ -1048,9 +999,15 @@ aggiornaStatoCalendari();
 aggiornaStatoPresenze();
 renderStats();
 renderConvocati();
+fissaDateSeVuote();
+setTimeout(fissaDateSeVuote, 120);
+setTimeout(fissaDateSeVuote, 400);
 
 // La stampa della lista convocati usa una zona dedicata: la preparo prima di stampare
 window.addEventListener('beforeprint', () => { stampaZone(); });
+});
+
+window.addEventListener('pageshow', fissaDateSeVuote);
 </script>
 </body>
 </html>
