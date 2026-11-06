@@ -54,12 +54,12 @@ th { background: #f8f9fa; color: #666; font-size: 0.75rem; text-transform: upper
 
 /* STATISTICHE */
 .gira { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; border: 1px solid #eee; border-radius: 8px; }
-#tabellaStats { min-width: 640px; margin-top: 0; font-size: 0.8rem; }
-#tabellaStats th, #tabellaStats td { padding: 6px 3px; text-align: center; border-bottom: 1px solid #eee; }
-#tabellaStats th { position: sticky; top: 0; font-size: 0.6rem; padding: 4px 2px; }
-#tabellaStats th.dom, #tabellaStats td.dom { background: #cfcfcf; }
-#tabellaStats td.nome, #tabellaStats th.nome { text-align: left; padding-left: 6px; white-space: nowrap; font-size: 0.8rem; min-width: 130px; }
-#tabellaStats td.tot, #tabellaStats th.tot { font-weight: 700; background: #f1f3f4; }
+.tabStats { min-width: 640px; margin-top: 0; font-size: 0.8rem; }
+.tabStats th, .tabStats td { padding: 6px 3px; text-align: center; border-bottom: 1px solid #eee; }
+.tabStats th { position: sticky; top: 0; font-size: 0.6rem; padding: 4px 2px; }
+.tabStats th.dom, .tabStats td.dom { background: #cfcfcf; }
+.tabStats td.nome, .tabStats th.nome { text-align: left; padding-left: 6px; white-space: nowrap; font-size: 0.8rem; min-width: 130px; }
+.tabStats td.tot, .tabStats th.tot { font-weight: 700; background: #f1f3f4; }
 .stat-row { -webkit-user-select: none; user-select: none; cursor: pointer; }
 .stat-row:active { background: #f0f0f0; }
 .stat-row.convocato { background: #eaffef; font-weight: 700; color: #1b5e20; }
@@ -75,6 +75,40 @@ th { background: #f8f9fa; color: #666; font-size: 0.75rem; text-transform: upper
 .mini { display: inline-block; padding: 6px 12px; border: none; border-radius: 8px; font-weight: 700; color: #fff; font-size: 12px; cursor: pointer; text-decoration: none; }
 .btn-wa { background: #25a244; }
 .mini:active { opacity: 0.7; }
+
+/* CALENDARIO MESI */
+.cal-testa { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 8px 0; }
+.cal-testa strong { font-size: 1.2rem; color: #2e7d32; }
+.cal-testa button { width: 44px; height: 38px; border: none; border-radius: 10px; background: #6c757d; color: #fff; font-size: 1.3rem; font-weight: 700; cursor: pointer; }
+.cal-testa button:active { opacity: 0.7; }
+.griglia-mesi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.mese-btn {
+    position: relative; padding: 13px 0; border: 1px solid #ccc; border-radius: 10px; background: #f8f9fa;
+    color: #555; font-weight: 800; font-size: 0.9rem; cursor: pointer; font-family: inherit; -webkit-user-select: none; user-select: none;
+}
+.mese-btn.on { background: #2e7d32; border-color: #2e7d32; color: #fff; }
+.mese-btn.dati::after { content: ''; position: absolute; top: 5px; right: 6px; width: 7px; height: 7px; border-radius: 50%; background: #50C878; }
+.mese-btn.on.dati::after { background: #fff; }
+.mese-btn:active { opacity: 0.7; }
+.titolo-mese { font-weight: 800; color: #2e7d32; margin: 16px 0 2px 0; text-transform: capitalize; font-size: 1rem; }
+.riga-anno { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #eee; }
+.riga-anno .rn { flex: 1; min-width: 0; font-size: 0.9rem; font-weight: 700; }
+.riga-anno .rc { font-size: 0.75rem; color: #2e7d32; font-weight: 700; width: 90px; text-align: right; }
+.riga-anno input { width: 84px; padding: 8px; text-align: center; }
+
+/* FILTRI STATISTICHE */
+.filtri { display: flex; gap: 10px; margin-top: 10px; }
+.filtri > div { flex: 1; min-width: 0; }
+.filtri label { margin: 0 0 4px 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip {
+    padding: 8px 13px; border-radius: 18px; border: 1px solid #ccc; background: #f8f9fa;
+    color: #555; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: inherit;
+    text-transform: capitalize; -webkit-user-select: none; user-select: none;
+}
+.chip.on { background: #2e7d32; border-color: #2e7d32; color: #fff; }
+.chip:active { opacity: 0.7; }
+.chips-vuoto { color: #999; font-size: 0.85rem; padding: 6px 0; }
 
 /* BOTTONI */
 .btn {
@@ -134,6 +168,9 @@ details.guida[open] summary { margin-bottom: 10px; }
 #foglioStampa td.tot, #foglioStampa th.tot { border-left: 2px solid #000; }
 #foglioStampa td.nome { text-align: left; padding-left: 3px; font-size: 10px; white-space: nowrap; overflow: hidden; }
 #foglioStampa thead { display: table-header-group; }
+#foglioStampa table.grande th, #foglioStampa table.grande td { font-size: 12px; }
+#foglioStampa table.grande td.nome { font-size: 12px; padding-left: 6px; }
+#foglioStampa td.pres { font-weight: 700; }
 #foglioStampa tr { page-break-inside: avoid; }
 
 /* STAMPA */
@@ -176,10 +213,15 @@ details.guida[open] summary { margin-bottom: 10px; }
         <p><b>Importa presenze</b>: carica uno o più file JSON esportati dall'app Registro Presenze e li unisce tutti in un unico elenco.</p>
         <p><b>Cancella lista presenze</b>: svuota lo storico importato, dopo una conferma.</p>
 
+        <h3>👤 Anagrafica atleti</h3>
+        <p>I file presenze non contengono l'anno di nascita, quindi lo imposti qui, atleta per atleta oppure incollando un elenco "Nome 2015". Resta salvato anche se cancelli la lista presenze.</p>
+
         <h3>📊 Statistiche presenze</h3>
-        <p><b>Mese</b>: scegli il mese da vedere. La tabella ha una colonna per ogni giorno del mese e una colonna TOT con le presenze del mese per quell'atleta. Chi non è mai venuto compare con TOT 0.</p>
+        <p><b>Categoria</b>: menu a tendina che mostra solo gli atleti di Aquilotti, Scoiattoli o Pulcini. Si calcola dall'anno di nascita (vedi Anagrafica atleti).</p>
+        <p><b>Mesi</b>: nel calendario tocca uno o più mesi (anche di anni diversi con le frecce). Per ogni mese scelto compare la tabella con una colonna per ogni giorno e la colonna TOT. Se ne scegli più di uno, in fondo c'è anche il riepilogo del periodo. Il puntino verde indica i mesi con presenze.</p>
+        <p><b>Esporta PDF</b>: apre la stampa delle statistiche come le vedi (categoria e mesi scelti, una pagina per mese più il riepilogo). Dalla schermata di stampa puoi salvare il PDF.</p>
         <p><b>Tocca un atleta</b>: lo aggiunge o lo toglie dalla lista dei convocati. La riga diventa verde con il segno ✓.</p>
-        <p><b>Tutti del mese</b>: convocia tutti quelli con almeno una presenza nel mese. <b>Deseleziona</b>: li toglie tutti.</p>
+        <p><b>Tutti i presenti</b>: convoca tutti quelli con almeno una presenza nel periodo e nella categoria mostrati. <b>Deseleziona</b>: li toglie tutti.</p>
 
         <h3>📋 Lista convocati</h3>
         <p>Si riempie toccando gli atleti nella tabella delle statistiche. Ogni nome si tocca per toglierlo.</p>
@@ -188,7 +230,7 @@ details.guida[open] summary { margin-bottom: 10px; }
         <p><b>Stampa PDF</b>: apre la stampa della lista convocati. Dalla schermata di stampa puoi salvare il PDF.</p>
 
         <h3>🖨 Foglio presenze stampabile</h3>
-        <p><b>Crea foglio</b>: scegli il mese e tocca il pulsante. Si apre la stampa di tutto il mese con tutti gli atleti, in una tabella tipo foglio Excel con una colonna per giorno dove mettere la X e una colonna TOT. Serve per compilarlo a mano, indipendentemente dall'app.</p>
+        <p><b>Crea foglio</b>: scegli un solo mese nel calendario e tocca il pulsante. Rispetta il filtro categoria. Si apre la stampa di tutto il mese con tutti gli atleti, in una tabella tipo foglio Excel con una colonna per giorno dove mettere la X e una colonna TOT. Serve per compilarlo a mano, indipendentemente dall'app.</p>
     </div>
 </details>
 
@@ -240,21 +282,43 @@ details.guida[open] summary { margin-bottom: 10px; }
 </div>
 
 <div class="card no-print">
+    <div class="titolo-sezione">👤 ANAGRAFICA ATLETI</div>
+    <div id="statoAnagrafica" class="stato-lista">Importa prima le presenze</div>
+    <p style="font-size:0.8rem; color:#666; margin:0 0 8px 0;">Le categorie si calcolano dall'anno di nascita: <b>2014-2015 Aquilotti</b>, <b>2016-2017 Scoiattoli</b>, <b>2018-2021 Pulcini</b>.</p>
+    <button class="btn" style="background:#ff9800" id="btnApriAnagrafica">✏️ Imposta anni di nascita</button>
+    <div class="pannello" id="pnlAnagrafica">
+        <div id="listaAnagrafica"></div>
+        <label>OPPURE INCOLLA UN ELENCO (una riga per atleta: Nome 2015)</label>
+        <textarea id="elencoAnni" placeholder="Mario Rossi 2015&#10;Luca Bianchi;2017"></textarea>
+        <button class="btn btn-save" id="btnApplicaElenco">Applica elenco</button>
+    </div>
+</div>
+
+<div class="card no-print">
     <div class="titolo-sezione">📊 STATISTICHE PRESENZE</div>
-    <div style="display:flex; gap:10px; align-items:center;">
-        <input type="month" id="meseStats" style="flex:1">
-        <button class="btn btn-print" id="btnFoglio" style="width:150px; margin:0">CREA FOGLIO</button>
+    <label for="filtroCategoria">CATEGORIA</label>
+    <select id="filtroCategoria"><option value="">Tutte le categorie</option></select>
+
+    <label>MESI (tocca per includere o togliere)</label>
+    <div class="cal-testa">
+        <button type="button" id="annoPrec">‹</button>
+        <strong id="annoCalLbl"></strong>
+        <button type="button" id="annoSucc">›</button>
     </div>
-    <p style="font-size:0.8rem; color:#666; margin:8px 0 0 0;">Tocca un atleta per convocarlo: la riga diventa verde. La colonna TOT conta le presenze del mese.</p>
-    <div class="gira">
-        <table id="tabellaStats">
-            <thead id="statsHead"></thead>
-            <tbody id="statsBody"></tbody>
-        </table>
+    <div class="griglia-mesi" id="grigliaMesi"></div>
+    <div style="display:flex; gap:10px; margin-top:8px;">
+        <button class="btn" style="background:#6c757d; margin:0; padding:10px;" id="btnAnnoIntero">Tutto l'anno</button>
+        <button class="btn" style="background:#6c757d; margin:0; padding:10px;" id="btnNessunMese">Nessun mese</button>
     </div>
+    <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="btn btn-print" id="btnEsportaStats" style="margin:0">📄 Esporta PDF</button>
+        <button class="btn" style="background:#6c757d; margin:0" id="btnFoglio">🖨 Crea foglio</button>
+    </div>
+    <p style="font-size:0.8rem; color:#666; margin:8px 0 0 0;">Per ogni mese scelto vedi i giorni uno per uno. Tocca un atleta per convocarlo: la riga diventa verde. La colonna TOT conta le presenze.</p>
+    <div id="statsContenitore"></div>
     <div id="contaPresenze"></div>
     <div style="display:flex; gap:10px; margin-top:10px;">
-        <button class="btn btn-save" id="btnTuttiPresenti">Tutti del mese</button>
+        <button class="btn btn-save" id="btnTuttiPresenti">Tutti i presenti</button>
         <button class="btn btn-reset" id="btnDeseleziona">Deseleziona</button>
     </div>
 </div>
@@ -306,10 +370,22 @@ let selCalendario = -1;      // indice del campionato scelto
 let selIncontro = -1;        // indice dell'incontro scelto dentro il campionato
 let presenze = {};           // { nome: { "2026-10-06": true, ... } }
 let convocati = new Set();   // nomi degli atleti convocati per l'incontro attivo
+let filtroCat = '';          // categoria scelta nelle statistiche ('' = tutte)
+let mesiSel = new Set();     // mesi (AAAA-MM) scelti nel calendario
+let annoCal = new Date().getFullYear();   // anno mostrato nel calendario
+let anagrafica = {};         // { nome: annoDiNascita }
+const CATEGORIE = [
+    { nome: 'Aquilotti',  da: 2014, a: 2015 },
+    { nome: 'Scoiattoli', da: 2016, a: 2017 },
+    { nome: 'Pulcini',    da: 2018, a: 2021 }
+];
+const CAT_NONE = 'Senza anno';
+const CAT_ALTRE = 'Altre annate';
 
 const CALENDARI_KEY = 'vconv_calendari_v1';
 const PRESENZE_KEY  = 'vconv_presenze_v1';
 const COACH_KEY     = 'vconv_coach_v1';
+const ANAGRAFICA_KEY = 'vconv_anagrafica_v1';
 
 /* ---------- UTILITY ---------- */
 function norm(s) { return String(s || '').trim().toLowerCase(); }
@@ -425,9 +501,11 @@ function aggiornaDettaglioIncontro() {
             dataIt(inc.d) + ' ore ' + oraBreve(inc.o) + '<br>📍 ' + inc.l;
         // la data di riferimento segue l'incontro scelto
         $('dataGara').value = inc.d;
-        if ($('meseStats').value.slice(0, 7) !== inc.d.slice(0, 7)) {
-            $('meseStats').value = inc.d.slice(0, 7);
-        }
+        const ym = inc.d.slice(0, 7);
+        if (!mesiSel.has(ym)) mesiSel = new Set([ym]);
+        annoCal = parseInt(inc.d.slice(0, 4), 10);
+        renderCalendario();
+        renderStats();
     }
     renderConvocati();
 }
@@ -605,7 +683,9 @@ function aggiornaStatoPresenze() {
     } else {
         el.textContent = '⚠️ Nessuna lista presenze importata. Usa "Importa presenze".';
     }
-};
+    aggiornaFiltri();
+    aggiornaAnagrafica();
+}
 
 $('btnImportaPresenze').onclick = () => $('importaPresenzeFile').click();
 
@@ -666,24 +746,128 @@ function tuttiGliAtleti() {
     return Object.keys(presenze).sort((a, b) => a.localeCompare(b, 'it'));
 }
 
+// Categoria dall'anno di nascita
+function catAtleta(nome) {
+    const y = anagrafica[nome];
+    if (!y) return CAT_NONE;
+    const c = CATEGORIE.find(c => y >= c.da && y <= c.a);
+    return c ? c.nome : CAT_ALTRE;
+}
+
+function etichettaCat(nome) {
+    const c = CATEGORIE.find(c => c.nome === nome);
+    return c ? c.nome + ' (' + c.da + '-' + c.a + ')' : nome;
+}
+
+// Atleti della categoria scelta (o tutti)
+function atletiFiltrati() {
+    const nomi = tuttiGliAtleti();
+    return filtroCat ? nomi.filter(n => catAtleta(n) === filtroCat) : nomi;
+}
+
 function presenzeDelMese(nome, mese) {
     const g = presenze[nome] || {};
     return Object.keys(g).filter(d => d.slice(0, 7) === mese);
 }
 
-function renderStats() {
-    const mese = $('meseStats').value;
-    const head = $('statsHead');
-    const body = $('statsBody');
-    head.innerHTML = '';
-    body.innerHTML = '';
-    if (!mese) return;
+function contaNelPeriodo(nome, mesi) {
+    return mesi.reduce((t, m) => t + presenzeDelMese(nome, m).length, 0);
+}
 
-    const p = mese.split('-').map(Number);
+function mesiConDati() {
+    const s = new Set();
+    Object.keys(presenze).forEach(n => Object.keys(presenze[n]).forEach(d => s.add(d.slice(0, 7))));
+    return Array.from(s).sort();
+}
+
+function nomeMeseBreve(ym) {
+    const p = ym.split('-').map(Number);
+    return new Date(p[0], p[1] - 1, 1).toLocaleDateString('it-IT', { month: 'short', year: '2-digit' });
+}
+
+function nomeMeseLungo(ym) {
+    const p = ym.split('-').map(Number);
+    return new Date(p[0], p[1] - 1, 1).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' });
+}
+
+function mesiAttivi() { return Array.from(mesiSel).sort(); }
+
+// Menu categorie: le tre fisse, più "Altre annate"/"Senza anno" solo se servono
+function aggiornaFiltri() {
+    const sel = $('filtroCategoria');
+    const usate = new Set(tuttiGliAtleti().map(catAtleta));
+    const voci = CATEGORIE.map(c => c.nome);
+    if (usate.has(CAT_ALTRE)) voci.push(CAT_ALTRE);
+    if (usate.has(CAT_NONE)) voci.push(CAT_NONE);
+    if (filtroCat && voci.indexOf(filtroCat) < 0) filtroCat = '';
+    sel.innerHTML = '';
+    sel.appendChild(new Option('Tutte le categorie', ''));
+    voci.forEach(v => sel.appendChild(new Option(etichettaCat(v), v)));
+    sel.value = filtroCat;
+}
+
+/* ---------- CALENDARIO MESI ---------- */
+const MESI_BREVI = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+
+function chiaveMese(y, m) { return y + '-' + String(m).padStart(2, '0'); }
+
+function renderCalendario() {
+    $('annoCalLbl').textContent = annoCal;
+    const box = $('grigliaMesi');
+    box.innerHTML = '';
+    const conDati = new Set(mesiConDati());
+    for (let m = 1; m <= 12; m++) {
+        const k = chiaveMese(annoCal, m);
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'mese-btn' + (mesiSel.has(k) ? ' on' : '') + (conDati.has(k) ? ' dati' : '');
+        b.textContent = MESI_BREVI[m - 1];
+        b.onclick = () => {
+            if (mesiSel.has(k)) mesiSel.delete(k); else mesiSel.add(k);
+            renderCalendario();
+            renderStats();
+        };
+        box.appendChild(b);
+    }
+}
+
+$('annoPrec').onclick = () => { annoCal--; renderCalendario(); };
+$('annoSucc').onclick = () => { annoCal++; renderCalendario(); };
+$('btnAnnoIntero').onclick = () => {
+    for (let m = 1; m <= 12; m++) mesiSel.add(chiaveMese(annoCal, m));
+    renderCalendario();
+    renderStats();
+};
+$('btnNessunMese').onclick = () => { mesiSel.clear(); renderCalendario(); renderStats(); };
+
+/* ---------- TABELLE STATISTICHE ---------- */
+
+function togglaConvocato(nome) {
+    if (convocati.has(nome)) convocati.delete(nome); else convocati.add(nome);
+    renderStats();
+    renderConvocati();
+}
+
+// Tabella di un mese: una colonna per giorno + TOT
+function tabellaMeseSchermo(ym, nomi) {
+    const p = ym.split('-').map(Number);
     const anno = p[0], m = p[1];
     const nGiorni = new Date(anno, m, 0).getDate();
     const lettere = ['D', 'L', 'M', 'M', 'G', 'V', 'S'];
     const eDomenica = g => new Date(anno, m - 1, g).getDay() === 0;
+
+    const wrap = document.createElement('div');
+    const tit = document.createElement('div');
+    tit.className = 'titolo-mese';
+    tit.textContent = nomeMeseLungo(ym);
+    wrap.appendChild(tit);
+
+    const gira = document.createElement('div');
+    gira.className = 'gira';
+    const tab = document.createElement('table');
+    tab.className = 'tabStats';
+    const thead = document.createElement('thead');
+    const body = document.createElement('tbody');
 
     const trH = document.createElement('tr');
     const thNome = document.createElement('th');
@@ -700,66 +884,213 @@ function renderStats() {
     thTot.className = 'tot';
     thTot.textContent = 'TOT';
     trH.appendChild(thTot);
-    head.appendChild(trH);
-
-    const nomi = tuttiGliAtleti();
-    if (!nomi.length) {
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.colSpan = nGiorni + 2;
-        td.style.textAlign = 'center';
-        td.style.color = '#999';
-        td.textContent = 'Nessun atleta. Importa prima le presenze.';
-        tr.appendChild(td);
-        body.appendChild(tr);
-        $('contaPresenze').textContent = '';
-        return;
-    }
+    thead.appendChild(trH);
 
     nomi.forEach(nome => {
-        const giorni = presenzeDelMese(nome, mese);
+        const giorni = presenzeDelMese(nome, ym);
         const tr = document.createElement('tr');
         tr.className = 'stat-row' + (convocati.has(nome) ? ' convocato' : '');
-
         const tdNome = document.createElement('td');
         tdNome.className = 'nome';
         tdNome.textContent = nome;
         tr.appendChild(tdNome);
-
         for (let g = 1; g <= nGiorni; g++) {
             const td = document.createElement('td');
             if (eDomenica(g)) td.className = 'dom';
-            const c = giorni.indexOf(anno + '-' + String(m).padStart(2, '0') + '-' + String(g).padStart(2, '0')) >= 0;
+            const c = giorni.indexOf(ym + '-' + String(g).padStart(2, '0')) >= 0;
             td.innerHTML = c ? '<span class="punto">●</span>' : '<span class="zero">○</span>';
             tr.appendChild(td);
         }
-
         const tdTot = document.createElement('td');
         tdTot.className = 'tot';
         tdTot.textContent = giorni.length;
         tr.appendChild(tdTot);
-
-        tr.onclick = () => {
-            if (convocati.has(nome)) convocati.delete(nome); else convocati.add(nome);
-            renderStats();
-            renderConvocati();
-        };
+        tr.onclick = () => togglaConvocato(nome);
         body.appendChild(tr);
     });
 
-    $('contaPresenze').textContent = convocati.size
-        ? 'Presenti nel mese: ' + nomi.filter(n => presenzeDelNome(n, mese).length).length + ' · Convocati: ' + convocati.size
-        : 'Convocati: ' + convocati.size;
+    tab.appendChild(thead);
+    tab.appendChild(body);
+    gira.appendChild(tab);
+    wrap.appendChild(gira);
+    return wrap;
 }
 
-function presenzeDelNome(nome, mese) { return presenzeDelMese(nome, mese); }
+// Riepilogo del periodo: una colonna per mese + TOT (solo con più mesi)
+function riepilogoSchermo(mesi, nomi) {
+    const wrap = document.createElement('div');
+    const tit = document.createElement('div');
+    tit.className = 'titolo-mese';
+    tit.textContent = 'Riepilogo periodo';
+    wrap.appendChild(tit);
 
-$('meseStats').onchange = renderStats;
+    const gira = document.createElement('div');
+    gira.className = 'gira';
+    const tab = document.createElement('table');
+    tab.className = 'tabStats';
+    tab.style.minWidth = '0';
+    const thead = document.createElement('thead');
+    const body = document.createElement('tbody');
+
+    const trH = document.createElement('tr');
+    const thNome = document.createElement('th');
+    thNome.className = 'nome';
+    thNome.textContent = 'Atleta';
+    trH.appendChild(thNome);
+    mesi.forEach(ym => {
+        const th = document.createElement('th');
+        th.style.textTransform = 'capitalize';
+        th.style.fontSize = '0.7rem';
+        th.textContent = nomeMeseBreve(ym);
+        trH.appendChild(th);
+    });
+    const thTot = document.createElement('th');
+    thTot.className = 'tot';
+    thTot.textContent = 'TOT';
+    trH.appendChild(thTot);
+    thead.appendChild(trH);
+
+    nomi.forEach(nome => {
+        const tr = document.createElement('tr');
+        tr.className = 'stat-row' + (convocati.has(nome) ? ' convocato' : '');
+        const tdNome = document.createElement('td');
+        tdNome.className = 'nome';
+        tdNome.textContent = nome;
+        tr.appendChild(tdNome);
+        let tot = 0;
+        mesi.forEach(ym => {
+            const n = presenzeDelMese(nome, ym).length;
+            tot += n;
+            const td = document.createElement('td');
+            td.innerHTML = n ? '<span class="punto"><b>' + n + '</b></span>' : '<span class="zero">○</span>';
+            tr.appendChild(td);
+        });
+        const tdTot = document.createElement('td');
+        tdTot.className = 'tot';
+        tdTot.textContent = tot;
+        tr.appendChild(tdTot);
+        tr.onclick = () => togglaConvocato(nome);
+        body.appendChild(tr);
+    });
+
+    tab.appendChild(thead);
+    tab.appendChild(body);
+    gira.appendChild(tab);
+    wrap.appendChild(gira);
+    return wrap;
+}
+
+function renderStats() {
+    const cont = $('statsContenitore');
+    cont.innerHTML = '';
+    const mesi = mesiAttivi();
+    const msg = (t) => {
+        const d = document.createElement('div');
+        d.style.cssText = 'text-align:center; color:#999; padding:14px 0;';
+        d.textContent = t;
+        cont.appendChild(d);
+        $('contaPresenze').textContent = '';
+    };
+
+    if (!mesi.length) { msg('👆 Tocca uno o più mesi nel calendario.'); return; }
+    const nomi = atletiFiltrati();
+    if (!nomi.length) {
+        msg(tuttiGliAtleti().length
+            ? 'Nessun atleta in questa categoria. Controlla gli anni di nascita nell\'Anagrafica.'
+            : 'Nessun atleta. Importa prima le presenze.');
+        return;
+    }
+
+    mesi.forEach(ym => cont.appendChild(tabellaMeseSchermo(ym, nomi)));
+    if (mesi.length > 1) cont.appendChild(riepilogoSchermo(mesi, nomi));
+
+    const conPresenze = nomi.filter(n => contaNelPeriodo(n, mesi) > 0).length;
+    $('contaPresenze').textContent = 'Atleti: ' + nomi.length + ' · Con presenze: ' + conPresenze + ' · Convocati: ' + convocati.size;
+}
+
+$('filtroCategoria').onchange = (e) => { filtroCat = e.target.value; renderStats(); };
+
+/* ---------- ANAGRAFICA (anno di nascita) ---------- */
+
+function salvaAnagrafica() { scriviChiave(ANAGRAFICA_KEY, anagrafica); }
+
+function impostaAnno(nome, valore) {
+    const y = parseInt(valore, 10);
+    if (y >= 1990 && y <= 2025) anagrafica[nome] = y; else delete anagrafica[nome];
+    salvaAnagrafica();
+}
+
+function aggiornaStatoAnagrafica() {
+    const nomi = tuttiGliAtleti();
+    const senza = nomi.filter(n => !anagrafica[n]).length;
+    $('statoAnagrafica').innerHTML = nomi.length
+        ? '<strong>' + (nomi.length - senza) + '</strong> atleti con anno di nascita · <strong>' + senza + '</strong> senza'
+        : '⚠️ Nessun atleta. Importa prima le presenze.';
+}
+
+function aggiornaAnagrafica() {
+    aggiornaStatoAnagrafica();
+    const box = $('listaAnagrafica');
+    box.innerHTML = '';
+    tuttiGliAtleti().forEach(nome => {
+        const riga = document.createElement('div');
+        riga.className = 'riga-anno';
+        const rn = document.createElement('div');
+        rn.className = 'rn';
+        rn.textContent = nome;
+        const rc = document.createElement('div');
+        rc.className = 'rc';
+        rc.textContent = catAtleta(nome);
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.inputMode = 'numeric';
+        inp.placeholder = 'Anno';
+        inp.min = 1990;
+        inp.max = 2025;
+        if (anagrafica[nome]) inp.value = anagrafica[nome];
+        inp.onchange = () => {
+            impostaAnno(nome, inp.value);
+            rc.textContent = catAtleta(nome);
+            aggiornaStatoAnagrafica();
+            aggiornaFiltri();
+            renderStats();
+        };
+        riga.appendChild(rn);
+        riga.appendChild(inp);
+        riga.appendChild(rc);
+        box.appendChild(riga);
+    });
+}
+
+$('btnApriAnagrafica').onclick = () => $('pnlAnagrafica').classList.toggle('aperto');
+
+$('btnApplicaElenco').onclick = () => {
+    const testo = $('elencoAnni').value;
+    const mappa = {};
+    tuttiGliAtleti().forEach(n => { mappa[norm(n)] = n; });
+    let ok = 0;
+    const nonTrovati = [];
+    testo.split('\n').forEach(r => {
+        r = r.trim();
+        if (!r) return;
+        const m = r.match(/^(.*?)[\s;,\t]+(\d{4})$/);
+        const nome = m ? mappa[norm(m[1].replace(/[;,\s]+$/, ''))] : null;
+        const y = m ? parseInt(m[2], 10) : 0;
+        if (nome && y >= 1990 && y <= 2025) { anagrafica[nome] = y; ok++; } else nonTrovati.push(r);
+    });
+    if (ok) salvaAnagrafica();
+    aggiornaAnagrafica();
+    aggiornaFiltri();
+    renderStats();
+    let msg = '✅ Anni impostati: ' + ok;
+    if (nonTrovati.length) msg += '\nNon riconosciuti (' + nonTrovati.length + '):\n' + nonTrovati.slice(0, 10).join('\n');
+    alert(msg);
+};
 
 $('btnTuttiPresenti').onclick = () => {
-    const mese = $('meseStats').value;
-    if (!mese) { alert('Scegli un mese.'); return; }
-    tuttiGliAtleti().forEach(n => { if (presenzeDelMese(n, mese).length) convocati.add(n); });
+    const mesi = mesiAttivi();
+    if (!mesi.length) { alert('Scegli almeno un mese.'); return; }
+    atletiFiltrati().forEach(n => { if (contaNelPeriodo(n, mesi)) convocati.add(n); });
     renderStats();
     renderConvocati();
 };
@@ -813,6 +1144,7 @@ $('btnGruppo').onclick = () => {
 
 $('btnStampa').onclick = () => {
     if (!convocati.size) { alert('Seleziona almeno un atleta nelle statistiche.'); return; }
+    document.body.classList.remove('stampa-foglio');
     document.body.classList.add('stampa-conv');
     window.print();
 };
@@ -850,12 +1182,13 @@ function stampaZone() {
 
 function gruppiFoglio() {
     // Senza anagrafica non si conosce l'anno di nascita: un solo gruppo con tutti gli atleti
-    const nomi = tuttiGliAtleti();
+    const nomi = atletiFiltrati();
     if (!nomi.length) return [];
-    return [{ titolo: 'TUTTI GLI ATLETI', atleti: nomi.map(n => ({ n: n, a: 0 })) }];
+    return [{ titolo: filtroCat ? filtroCat.toUpperCase() : 'TUTTI GLI ATLETI', atleti: nomi.map(n => ({ n: n, a: 0 })) }];
 }
 
-function tabellaFoglio(lista, anno, m, nGiorni) {
+// dati (opzionale): funzione nome -> numeri dei giorni presenti; se manca il foglio resta vuoto da compilare a mano
+function tabellaFoglio(lista, anno, m, nGiorni, dati) {
     const tab = document.createElement('table');
     const cg = document.createElement('colgroup');
     const larghezze = [4, 26];
@@ -904,13 +1237,16 @@ function tabellaFoglio(lista, anno, m, nGiorni) {
         tdN.className = 'nome';
         tdN.textContent = a.n;
         tr.appendChild(tdN);
+        const gp = dati ? dati(a.n) : null;
         for (let g = 1; g <= nGiorni; g++) {
             const td = document.createElement('td');
             if (eDomenica(g)) td.className = 'dom';
+            if (gp && gp.indexOf(g) >= 0) { td.textContent = '●'; td.className += ' pres'; }
             tr.appendChild(td);
         }
         const tdTot = document.createElement('td');
         tdTot.className = 'tot';
+        if (gp) tdTot.textContent = String(gp.length);
         tr.appendChild(tdTot);
         tbody.appendChild(tr);
     });
@@ -919,9 +1255,10 @@ function tabellaFoglio(lista, anno, m, nGiorni) {
 }
 
 function creaFoglio() {
-    const mese = $('meseStats').value;
-    if (!mese) { alert('Scegli un mese.'); return; }
-    if (!tuttiGliAtleti().length) { alert('Prima devi avere degli atleti: importa le presenze.'); return; }
+    const attivi = mesiAttivi();
+    if (attivi.length !== 1) { alert('Per il foglio scegli un solo mese nel calendario.'); return; }
+    const mese = attivi[0];
+    if (!atletiFiltrati().length) { alert('Nessun atleta da stampare: importa le presenze o cambia categoria.'); return; }
     const p = mese.split('-').map(Number);
     const anno = p[0], m = p[1];
     const nGiorni = new Date(anno, m, 0).getDate();
@@ -960,11 +1297,135 @@ function creaFoglio() {
         box.appendChild(pagina);
     });
 
+    document.body.classList.remove('stampa-conv');
     document.body.classList.add('stampa-foglio');
     window.print();
 }
 
 $('btnFoglio').onclick = creaFoglio;
+
+/* ---------- ESPORTA STATISTICHE (PDF dalla stampa) ---------- */
+
+function tabellaRiepilogo(lista, mesi) {
+    const tab = document.createElement('table');
+    tab.className = 'grande';
+    const cg = document.createElement('colgroup');
+    const larghezze = [6, 40];
+    const resto = 46 / mesi.length;
+    mesi.forEach(() => larghezze.push(resto));
+    larghezze.push(8);
+    larghezze.forEach(l => {
+        const c = document.createElement('col');
+        c.style.width = l + '%';
+        cg.appendChild(c);
+    });
+    tab.appendChild(cg);
+
+    const thead = document.createElement('thead');
+    const trH = document.createElement('tr');
+    const intest = (testo, classe) => {
+        const th = document.createElement('th');
+        th.textContent = testo;
+        if (classe) th.className = classe;
+        return th;
+    };
+    trH.appendChild(intest('N.'));
+    trH.appendChild(intest('ATLETA'));
+    mesi.forEach(ym => trH.appendChild(intest(nomeMeseBreve(ym).toUpperCase())));
+    trH.appendChild(intest('TOT', 'tot'));
+    thead.appendChild(trH);
+    tab.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    lista.forEach((a, i) => {
+        const tr = document.createElement('tr');
+        const tdNum = document.createElement('td');
+        tdNum.className = 'num';
+        tdNum.textContent = String(i + 1);
+        tr.appendChild(tdNum);
+        const tdN = document.createElement('td');
+        tdN.className = 'nome';
+        tdN.textContent = a.n;
+        tr.appendChild(tdN);
+        let tot = 0;
+        mesi.forEach(ym => {
+            const n = presenzeDelMese(a.n, ym).length;
+            tot += n;
+            const td = document.createElement('td');
+            td.textContent = n ? String(n) : '';
+            if (n) td.className = 'pres';
+            tr.appendChild(td);
+        });
+        const tdTot = document.createElement('td');
+        tdTot.className = 'tot pres';
+        tdTot.textContent = String(tot);
+        tr.appendChild(tdTot);
+        tbody.appendChild(tr);
+    });
+    tab.appendChild(tbody);
+    return tab;
+}
+
+function esportaStats() {
+    if (!Object.keys(presenze).length) { alert('Nessuna presenza da esportare: importa prima le presenze.'); return; }
+    const mesi = mesiAttivi();
+    if (!mesi.length) { alert('Scegli almeno un mese nel calendario.'); return; }
+    const nomi = atletiFiltrati();
+    if (!nomi.length) { alert('Nessun atleta in questa categoria.'); return; }
+
+    const lista = nomi.map(n => ({ n: n, a: 0 }));
+    const catTxt = filtroCat ? etichettaCat(filtroCat).toUpperCase() : 'TUTTE LE CATEGORIE';
+    const box = $('foglioStampa');
+    box.innerHTML = '';
+
+    const nuovaPagina = (titoloTxt, sottoTxt) => {
+        const pagina = document.createElement('div');
+        pagina.className = 'foglio-pagina';
+        const testa = document.createElement('div');
+        testa.className = 'foglio-testa';
+        const logo = document.createElement('img');
+        logo.src = LOGO_SRC;
+        logo.alt = '';
+        testa.appendChild(logo);
+        const titolo = document.createElement('div');
+        titolo.className = 'foglio-titolo';
+        titolo.textContent = titoloTxt;
+        testa.appendChild(titolo);
+        const gruppo = document.createElement('div');
+        gruppo.className = 'foglio-gruppo';
+        gruppo.textContent = catTxt;
+        testa.appendChild(gruppo);
+        const sotto = document.createElement('div');
+        sotto.className = 'foglio-sotto';
+        sotto.textContent = (sottoTxt ? sottoTxt + ' · ' : '') + "ASD VALL'IPPARI VITTORIA BASKET";
+        testa.appendChild(sotto);
+        pagina.appendChild(testa);
+        box.appendChild(pagina);
+        return pagina;
+    };
+
+    // una pagina per ogni mese, con i giorni
+    mesi.forEach(ym => {
+        const p = ym.split('-').map(Number);
+        const nGiorni = new Date(p[0], p[1], 0).getDate();
+        const pag = nuovaPagina(nomeMeseLungo(ym).toUpperCase(), '');
+        pag.appendChild(tabellaFoglio(lista, p[0], p[1], nGiorni, nome =>
+            presenzeDelMese(nome, ym).map(d => parseInt(d.slice(8, 10), 10))));
+    });
+
+    // più mesi: pagina finale di riepilogo
+    if (mesi.length > 1) {
+        const periodo = nomeMeseBreve(mesi[0]).toUpperCase() + ' – ' + nomeMeseBreve(mesi[mesi.length - 1]).toUpperCase();
+        const pag = nuovaPagina('RIEPILOGO PRESENZE', 'Periodo: ' + periodo);
+        pag.appendChild(tabellaRiepilogo(lista, mesi));
+    }
+
+    document.body.classList.remove('stampa-conv');
+    document.body.classList.add('stampa-foglio');
+    window.print();
+}
+
+$('btnEsportaStats').onclick = esportaStats;
 
 /* ---------- COACH ---------- */
 $('nomeCoach').oninput = () => {
@@ -977,7 +1438,6 @@ $('nomeCoach').oninput = () => {
 // fissa le date una volta sola, quando sono vuote
 function fissaDateSeVuote() {
     const oggi = oggiLocale();
-    if (!$('meseStats').value) $('meseStats').value = oggi.slice(0, 7);
     if (!$('dataGara').value) $('dataGara').value = oggi;
     renderStats();
 }
@@ -991,9 +1451,14 @@ if (!Array.isArray(calendari)) calendari = [];
 presenze = leggiChiave(PRESENZE_KEY, {});
 if (!presenze || typeof presenze !== 'object' || Array.isArray(presenze)) presenze = {};
 
+anagrafica = leggiChiave(ANAGRAFICA_KEY, {});
+if (!anagrafica || typeof anagrafica !== 'object' || Array.isArray(anagrafica)) anagrafica = {};
+
 const oggi = oggiLocale();
 $('dataGara').value = oggi;
-$('meseStats').value = oggi.slice(0, 7);
+mesiSel = new Set([oggi.slice(0, 7)]);
+annoCal = parseInt(oggi.slice(0, 4), 10);
+renderCalendario();
 
 aggiornaStatoCalendari();
 aggiornaStatoPresenze();
@@ -1005,6 +1470,7 @@ setTimeout(fissaDateSeVuote, 400);
 
 // La stampa della lista convocati usa una zona dedicata: la preparo prima di stampare
 window.addEventListener('beforeprint', () => { stampaZone(); });
+window.addEventListener('afterprint', () => { document.body.classList.remove('stampa-foglio', 'stampa-conv'); });
 });
 
 window.addEventListener('pageshow', fissaDateSeVuote);
